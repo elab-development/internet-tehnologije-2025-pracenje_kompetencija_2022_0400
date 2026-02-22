@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import "./register.css";
-import { FiUser, FiMail, FiLock, FiArrowRight } from "react-icons/fi";
+import { FiUser, FiMail, FiLock, FiArrowRight } from "react-icons/fi"; 
+import AuthField from "../components/AuthField";
 
 type ApiOk = {
   id: string;
@@ -51,9 +52,8 @@ export default function RegisterPage() {
       }
 
       setSuccess("Uspešna registracija! Preusmeravam...");
-      // cookie (JWT) je već setovan iz API rute
       setTimeout(() => {
-        window.location.href = "/"; // ili "/dashboard"
+        window.location.href = "/";
       }, 600);
     } catch {
       setError("Došlo je do greške. Pokušaj ponovo.");
@@ -71,46 +71,46 @@ export default function RegisterPage() {
         </div>
 
         <form className="auth-form" onSubmit={onSubmit}>
-          <label className="field">
-            <span>Ime i prezime</span>
-            <div className="input">
-              <FiUser />
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="npr. Petar Petrović"
-                autoComplete="name"
-              />
-            </div>
-          </label>
+          <AuthField
+            label="Ime i prezime"
+            icon={<FiUser />}
+            value={name}
+            onChange={setName}
+            placeholder="npr. Petar Petrović"
+            autoComplete="name"
+            disabled={loading}
+            name="name"
+            id="reg-name"
+            required
+          />
 
-          <label className="field">
-            <span>Email</span>
-            <div className="input">
-              <FiMail />
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="npr. petar@example.com"
-                autoComplete="email"
-                type="email"
-              />
-            </div>
-          </label>
+          <AuthField
+            label="Email"
+            icon={<FiMail />}
+            value={email}
+            onChange={setEmail}
+            placeholder="npr. petar@example.com"
+            autoComplete="email"
+            type="email"
+            disabled={loading}
+            name="email"
+            id="reg-email"
+            required
+          />
 
-          <label className="field">
-            <span>Lozinka</span>
-            <div className="input">
-              <FiLock />
-              <input
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="min 6 karaktera"
-                autoComplete="new-password"
-                type="password"
-              />
-            </div>
-          </label>
+          <AuthField
+            label="Lozinka"
+            icon={<FiLock />}
+            value={password}
+            onChange={setPassword}
+            placeholder="min 6 karaktera"
+            autoComplete="new-password"
+            type="password"
+            disabled={loading}
+            name="password"
+            id="reg-password"
+            required
+          />
 
           {error && <div className="msg error">{error}</div>}
           {success && <div className="msg success">{success}</div>}

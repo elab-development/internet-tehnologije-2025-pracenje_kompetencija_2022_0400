@@ -5,13 +5,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import "../register/register.css";
 import { FiMail, FiLock, FiArrowRight } from "react-icons/fi";
+import AuthField from "../components/AuthField";
+ 
 
 type ApiOk = {
   id: string;
   name: string | null;
   email: string;
   role: string | null;
-  token?: string;  
+  token?: string;
 };
 
 export default function LoginPage() {
@@ -57,12 +59,12 @@ export default function LoginPage() {
       }
 
       const ok = data as ApiOk;
- 
+
       localStorage.setItem(
         "auth_user",
         JSON.stringify({ id: ok.id, name: ok.name, email: ok.email, role: ok.role ?? "user" })
       );
- 
+
       if (ok.token) {
         localStorage.setItem("auth_token", ok.token);
       }
@@ -85,33 +87,33 @@ export default function LoginPage() {
         </div>
 
         <form className="auth-form" onSubmit={onSubmit}>
-          <label className="field">
-            <span>Email</span>
-            <div className="input">
-              <FiMail />
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="npr. petar@example.com"
-                autoComplete="email"
-                type="email"
-              />
-            </div>
-          </label>
+          <AuthField
+            label="Email"
+            icon={<FiMail />}
+            value={email}
+            onChange={setEmail}
+            placeholder="npr. petar@example.com"
+            autoComplete="email"
+            type="email"
+            disabled={loading}
+            name="email"
+            id="login-email"
+            required
+          />
 
-          <label className="field">
-            <span>Lozinka</span>
-            <div className="input">
-              <FiLock />
-              <input
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="tvoja lozinka"
-                autoComplete="current-password"
-                type="password"
-              />
-            </div>
-          </label>
+          <AuthField
+            label="Lozinka"
+            icon={<FiLock />}
+            value={password}
+            onChange={setPassword}
+            placeholder="tvoja lozinka"
+            autoComplete="current-password"
+            type="password"
+            disabled={loading}
+            name="password"
+            id="login-password"
+            required
+          />
 
           {error && <div className="msg error">{error}</div>}
           {success && <div className="msg success">{success}</div>}
