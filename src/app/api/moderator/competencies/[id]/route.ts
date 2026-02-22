@@ -12,11 +12,14 @@ type PatchBody = {
   description?: string;
 };
 
-export async function PATCH(req: Request, ctx: { params: { id: string } }) {
+type Ctx = { params: Promise<{ id: string }> };  
+
+export async function PATCH(req: Request, { params }: Ctx) {
   const { error } = await requireRole(["moderator", "admin"]);
   if (error) return error;
 
-  const id = ctx.params.id;
+  const { id } = await params;  
+
   const body = (await req.json()) as PatchBody;
 
   const [updated] = await db
@@ -40,11 +43,11 @@ export async function PATCH(req: Request, ctx: { params: { id: string } }) {
   return NextResponse.json({ competency: updated });
 }
 
-export async function DELETE(_req: Request, ctx: { params: { id: string } }) {
+export async function DELETE(_req: Request, { params }: Ctx) {
   const { error } = await requireRole(["moderator", "admin"]);
   if (error) return error;
 
-  const id = ctx.params.id;
+  const { id } = await params;  
 
   const [deleted] = await db
     .delete(competencies)

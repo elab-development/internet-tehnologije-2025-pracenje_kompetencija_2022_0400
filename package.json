@@ -9,7 +9,6 @@
     "lint": "eslint",
     "db:migrate": "npx drizzle-kit generate && npx drizzle-kit push",
     "db:seed": "tsx src/db/seed.ts"
-
   },
   "dependencies": {
     "@remixicon/react": "^4.9.0",
@@ -20,6 +19,7 @@
     "pg": "^8.18.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "react-icons": "^5.5.0",
     "tsx": "^4.21.0"
   },
   "devDependencies": {
