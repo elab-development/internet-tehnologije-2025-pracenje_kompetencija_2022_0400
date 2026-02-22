@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import "../register/register.css"; 
+import { useRouter } from "next/navigation";
+import "../register/register.css";
 import { FiMail, FiLock, FiArrowRight } from "react-icons/fi";
 
 type ApiOk = {
@@ -10,15 +11,25 @@ type ApiOk = {
   name: string | null;
   email: string;
   role: string | null;
+  token?: string;  
 };
 
 export default function LoginPage() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
+
+  function redirectByRole(role: string | null) {
+    const r = role ?? "user";
+    if (r === "admin") return router.replace("/admin/dashboard");
+    if (r === "moderator") return router.replace("/moderator/dashboard");
+    return router.replace("/profile");
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -45,10 +56,19 @@ export default function LoginPage() {
         return;
       }
 
+      const ok = data as ApiOk;
+ 
+      localStorage.setItem(
+        "auth_user",
+        JSON.stringify({ id: ok.id, name: ok.name, email: ok.email, role: ok.role ?? "user" })
+      );
+ 
+      if (ok.token) {
+        localStorage.setItem("auth_token", ok.token);
+      }
+
       setSuccess("Uspešna prijava! Preusmeravam...");
-      setTimeout(() => {
-        window.location.href = "/"; // ili "/dashboard"
-      }, 600);
+      setTimeout(() => redirectByRole(ok.role), 300);
     } catch {
       setError("Došlo je do greške. Pokušaj ponovo.");
     } finally {

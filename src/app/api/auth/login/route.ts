@@ -58,6 +58,7 @@ export async function POST(req: Request) {
     name: u.name,
     email: u.email,
     role: u.role,
+     token,
   });
 
   res.cookies.set(AUTH_COOKIE, token, cookieOpts());
