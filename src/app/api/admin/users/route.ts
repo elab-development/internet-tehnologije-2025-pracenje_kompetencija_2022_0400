@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { desc, eq, and, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
 import { db } from "@/db";
@@ -18,14 +18,10 @@ export async function GET(req: NextRequest) {
   const { error } = await requireRole(["admin"]);
   if (error) return error;
 
-  const url = new URL(req.url);
+  const url = req.nextUrl;
 
   const q = (url.searchParams.get("q") ?? "").trim();
-  const role = (url.searchParams.get("role") ?? "").trim() as
-    | ""
-    | "user"
-    | "moderator"
-    | "admin";
+  const role = (url.searchParams.get("role") ?? "").trim() as "" | "user" | "moderator" | "admin";
   const activeParam = (url.searchParams.get("active") ?? "").trim(); // "true" | "false" | ""
 
   const whereParts: any[] = [];
@@ -35,29 +31,34 @@ export async function GET(req: NextRequest) {
   if (activeParam === "false") whereParts.push(eq(users.isActive, false));
 
   if (q) {
-    // case-insensitive search over name/email (Postgres)
     whereParts.push(
       sql`(${users.name} ILIKE ${"%" + q + "%"} OR ${users.email} ILIKE ${"%" + q + "%"})`
     );
   }
 
-  const whereClause = whereParts.length ? and(...whereParts) : undefined;
+  try {
+    let query = db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        isActive: users.isActive,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt,
+      })
+      .from(users);
 
-  const rows = await db
-    .select({
-      id: users.id,
-      name: users.name,
-      email: users.email,
-      role: users.role,
-      isActive: users.isActive,
-      createdAt: users.createdAt,
-      updatedAt: users.updatedAt,
-    })
-    .from(users)
-    .where(whereClause)
-    .orderBy(desc(users.createdAt));
+    if (whereParts.length) {
+      query = query.where(and(...whereParts)) as any;
+    }
 
-  return NextResponse.json({ users: rows });
+    const rows = await query.orderBy(desc(users.createdAt));
+
+    return NextResponse.json({ users: rows });
+  } catch {
+    return NextResponse.json({ error: "Greška pri učitavanju korisnika." }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -78,10 +79,7 @@ export async function POST(req: NextRequest) {
   const isActive = body.isActive ?? true;
 
   if (!name || !email || !password) {
-    return NextResponse.json(
-      { error: "name, email i password su obavezni." },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "name, email i password su obavezni." }, { status: 400 });
   }
 
   if (!["user", "moderator", "admin"].includes(role)) {
@@ -89,10 +87,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (password.length < 6) {
-    return NextResponse.json(
-      { error: "Lozinka mora imati minimum 6 karaktera." },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Lozinka mora imati minimum 6 karaktera." }, { status: 400 });
   }
 
   const passHash = await bcrypt.hash(password, 10);
@@ -120,17 +115,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ user: created }, { status: 201 });
   } catch (e: any) {
-    // unique email constraint
-    const msg = String(e?.message ?? "");
-    if (msg.toLowerCase().includes("users_email_uq") || msg.toLowerCase().includes("duplicate")) {
-      return NextResponse.json(
-        { error: "Email već postoji." },
-        { status: 409 }
-      );
+    const msg = String(e?.message ?? "").toLowerCase();
+    if (msg.includes("users_email_uq") || msg.includes("duplicate")) {
+      return NextResponse.json({ error: "Email već postoji." }, { status: 409 });
     }
-    return NextResponse.json(
-      { error: "Greška pri kreiranju korisnika." },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Greška pri kreiranju korisnika." }, { status: 500 });
   }
 }
