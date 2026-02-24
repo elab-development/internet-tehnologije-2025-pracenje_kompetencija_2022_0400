@@ -6,13 +6,13 @@ import { credentials } from "@/db/schema";
 import { requireRole } from "@/lib/guards";
 
 export async function POST(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest, 
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const auth = await requireRole(["moderator", "admin"]);
   if (auth.error) return auth.error;
 
-  const id = params.id;
+  const { id } = await params;
 
   try {
     const [updated] = await db
