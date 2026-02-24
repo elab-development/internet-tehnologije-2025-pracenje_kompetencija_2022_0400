@@ -4,6 +4,62 @@ import { competencies, userCompetencies } from "@/db/schema";
 import { requireAuthFromReq } from "@/lib/guards";
 import { and, asc, eq } from "drizzle-orm";
 
+/**
+ * @swagger
+ * /api/user/competencies:
+ * get:
+ * summary: Pregled ličnih kompetencija korisnika
+ * description: Vraća listu svih kompetencija koje je trenutno prijavljeni korisnik dodao na svoj profil, uključujući nivo i godine iskustva.
+ * tags: [User Competencies]
+ * responses:
+ * 200:
+ * description: Lista korisničkih kompetencija uspešno dobavljena.
+ * content:
+ * application/json:
+ * schema:
+ * type: array
+ * items:
+ * type: object
+ * properties:
+ * competencyId: { type: string }
+ * level: { type: number }
+ * years: { type: string }
+ * isFeatured: { type: boolean }
+ * competency:
+ * type: object
+ * properties:
+ * name: { type: string }
+ * 401:
+ * description: Neautorizovan pristup (JWT token nedostaje ili je nevažeći).
+ * 500:
+ * description: Interna greška servera pri učitavanju.
+ *
+ * post:
+ * summary: Dodavanje nove kompetencije na profil
+ * description: Omogućava korisniku da doda novu veštinu u svoj portfolio. Sistem proverava da li veština već postoji na profilu.
+ * tags: [User Competencies]
+ * requestBody:
+ * required: true
+ * content:
+ * application/json:
+ * schema:
+ * type: object
+ * required:
+ * - competencyId
+ * properties:
+ * competencyId: { type: string, description: "ID postojeće kompetencije iz baze" }
+ * level: { type: number, default: 1, minimum: 1, maximum: 5 }
+ * years: { type: string, default: "0.0" }
+ * isFeatured: { type: boolean, default: false }
+ * responses:
+ * 200:
+ * description: Kompetencija uspešno dodata na profil.
+ * 400:
+ * description: Nevalidni ulazni podaci (npr. nedostaje competencyId).
+ * 409:
+ * description: Konflikt - korisnik već ima ovu kompetenciju na profilu.
+ */
+
 export async function GET(req: NextRequest) {
   const { userId, error } = await requireAuthFromReq(req);
   if (error) return error;

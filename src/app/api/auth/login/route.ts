@@ -13,7 +13,85 @@ type Body = {
   email: string;
   password: string;
 };
-
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Login korisnika
+ *     description: Proverava email/lozinku, vraća korisnika i JWT token. Postavlja i auth cookie.
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "test@example.com"
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: "secret123"
+ *     responses:
+ *       200:
+ *         description: Uspesan login
+ *         headers:
+ *           Set-Cookie:
+ *             description: Postavlja auth cookie sa JWT tokenom.
+ *             schema:
+ *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 name:
+ *                   type: string
+ *                   nullable: true
+ *                 email:
+ *                   type: string
+ *                   format: email
+ *                 role:
+ *                   type: string
+ *                   nullable: true
+ *                 token:
+ *                   type: string
+ *               required:
+ *                 - id
+ *                 - email
+ *                 - token
+ *       401:
+ *         description: Pogrešan email ili lozinka
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *               required:
+ *                 - error
+ *       403:
+ *         description: Korisnik nije aktivan
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *               required:
+ *                 - error
+ */
 export async function POST(req: Request) {
   const { email, password } = (await req.json()) as Body;
 

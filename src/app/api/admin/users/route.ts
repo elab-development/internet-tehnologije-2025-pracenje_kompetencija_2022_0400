@@ -14,6 +14,54 @@ type CreateBody = {
   isActive?: boolean;
 };
 
+/**
+ * @swagger
+ * /api/admin/users:
+ *   get:
+ *     summary: Lista korisnika
+ *     description: Vraća listu korisnika. Dostupno samo adminu.
+ *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: q
+ *         schema:
+ *           type: string
+ *         description: Pretraga po imenu ili emailu
+ *       - in: query
+ *         name: role
+ *         schema:
+ *           type: string
+ *           enum: [user, moderator, admin]
+ *       - in: query
+ *         name: active
+ *         schema:
+ *           type: string
+ *           enum: [true, false]
+ *     responses:
+ *       200:
+ *         description: Lista korisnika
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id: { type: string }
+ *                       name: { type: string }
+ *                       email: { type: string }
+ *                       role: { type: string }
+ *                       isActive: { type: boolean }
+ *                       createdAt: { type: string, format: date-time }
+ *                       updatedAt: { type: string, format: date-time }
+ *       500:
+ *         description: Greška servera
+ */
 export async function GET(req: NextRequest) {
   const { error } = await requireRole(["admin"]);
   if (error) return error;
@@ -22,7 +70,7 @@ export async function GET(req: NextRequest) {
 
   const q = (url.searchParams.get("q") ?? "").trim();
   const role = (url.searchParams.get("role") ?? "").trim() as "" | "user" | "moderator" | "admin";
-  const activeParam = (url.searchParams.get("active") ?? "").trim(); // "true" | "false" | ""
+  const activeParam = (url.searchParams.get("active") ?? "").trim();
 
   const whereParts: any[] = [];
 
@@ -49,18 +97,50 @@ export async function GET(req: NextRequest) {
       })
       .from(users);
 
-    if (whereParts.length) {
-      query = query.where(and(...whereParts)) as any;
-    }
+    if (whereParts.length) query = query.where(and(...whereParts)) as any;
 
     const rows = await query.orderBy(desc(users.createdAt));
-
     return NextResponse.json({ users: rows });
   } catch {
     return NextResponse.json({ error: "Greška pri učitavanju korisnika." }, { status: 500 });
   }
 }
 
+/**
+ * @swagger
+ * /api/admin/users:
+ *   post:
+ *     summary: Kreiraj korisnika
+ *     description: Kreira novog korisnika. Samo admin.
+ *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [name, email, password]
+ *             properties:
+ *               name: { type: string, example: "Pera Perić" }
+ *               email: { type: string, format: email }
+ *               password: { type: string, minLength: 6 }
+ *               role:
+ *                 type: string
+ *                 enum: [user, moderator, admin]
+ *               isActive:
+ *                 type: boolean
+ *     responses:
+ *       201:
+ *         description: Kreiran korisnik
+ *       400:
+ *         description: Validaciona greška
+ *       409:
+ *         description: Email već postoji
+ *       500:
+ *         description: Greška servera
+ */
 export async function POST(req: NextRequest) {
   const { error } = await requireRole(["admin"]);
   if (error) return error;
@@ -93,25 +173,22 @@ export async function POST(req: NextRequest) {
   const passHash = await bcrypt.hash(password, 10);
 
   try {
-    const [created] = await db
-      .insert(users)
-      .values({
-        name,
-        email,
-        passHash,
-        role,
-        isActive,
-        updatedAt: new Date(),
-      })
-      .returning({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        role: users.role,
-        isActive: users.isActive,
-        createdAt: users.createdAt,
-        updatedAt: users.updatedAt,
-      });
+    const [created] = await db.insert(users).values({
+      name,
+      email,
+      passHash,
+      role,
+      isActive,
+      updatedAt: new Date(),
+    }).returning({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      role: users.role,
+      isActive: users.isActive,
+      createdAt: users.createdAt,
+      updatedAt: users.updatedAt,
+    });
 
     return NextResponse.json({ user: created }, { status: 201 });
   } catch (e: any) {

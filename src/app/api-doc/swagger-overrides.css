@@ -1,0 +1,120 @@
+/* =========================
+   Swagger UI - Dark overrides
+   ========================= */
+
+:root {
+  --bg: #0f172a;
+  --panel: #0b2239;
+  --panel-2: #0a1a2e;
+  --border: #1f3b5b;
+  --text: #e5e7eb;
+  --muted: #cbd5e1;
+}
+
+/* Page background */
+html,
+body {
+  background: var(--bg) !important;
+}
+
+/* Main container */
+.swagger-ui {
+  background: transparent !important;
+  color: var(--text) !important;
+}
+
+/* Top/header areas */
+.swagger-ui .topbar,
+.swagger-ui .scheme-container,
+.swagger-ui .info {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+/* The big white-ish blocks come mostly from section headers */
+.swagger-ui .opblock,
+.swagger-ui .opblock .opblock-section-header {
+  background: var(--panel) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: none !important;
+}
+
+/* Summary row */
+.swagger-ui .opblock .opblock-summary {
+  background: var(--panel) !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+/* Path + description (text next to POST) */
+.swagger-ui .opblock-summary-path,
+.swagger-ui .opblock-summary-path a {
+  color: #ffffff !important;
+}
+
+.swagger-ui .opblock-summary-description {
+  color: var(--muted) !important;
+}
+
+/* Inner body of operation */
+.swagger-ui .opblock-body,
+.swagger-ui .opblock-description-wrapper,
+.swagger-ui .opblock-external-docs-wrapper,
+.swagger-ui .opblock-body pre,
+.swagger-ui .opblock-body p,
+.swagger-ui .opblock-body li,
+.swagger-ui .opblock-body label,
+.swagger-ui .opblock-body span {
+  color: var(--text) !important;
+  background: transparent !important;
+}
+
+/* Inputs */
+.swagger-ui input,
+.swagger-ui textarea,
+.swagger-ui select {
+  background: var(--panel-2) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* Code / examples */
+.swagger-ui pre,
+.swagger-ui code,
+.swagger-ui .microlight {
+  background: var(--panel-2) !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* Tables (Responses etc.) */
+.swagger-ui table,
+.swagger-ui thead,
+.swagger-ui tbody,
+.swagger-ui tr,
+.swagger-ui th,
+.swagger-ui td {
+  background: transparent !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+/* Buttons */
+.swagger-ui .btn {
+  background: #1d4ed8 !important;
+  color: #ffffff !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.swagger-ui .btn:hover {
+  filter: brightness(1.05);
+}
+
+/* Make icons/arrows visible on dark */
+.swagger-ui .arrow,
+.swagger-ui .model-toggle:after,
+.swagger-ui .expand-operation,
+.swagger-ui .opblock-summary-control {
+  filter: invert(1) brightness(1.2) !important;
+}
