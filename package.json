@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "db:migrate": "npx drizzle-kit generate && npx drizzle-kit push",
-    "db:seed": "tsx src/db/seed.ts",
-    "test": "jest"
+      "dev": "next dev",
+      "build": "next build",
+      "start": "next start",
+      "lint": "next lint",
+      "db:migrate": "npx drizzle-kit generate && npx drizzle-kit push",
+      "db:seed": "tsx src/db/seed.ts",
+      "test": "jest --ci --watchAll=false",
+      "test:watch": "jest --watch"
   },
   "dependencies": {
     "@remixicon/react": "^4.9.0",

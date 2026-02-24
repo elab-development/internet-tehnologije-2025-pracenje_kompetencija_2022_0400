@@ -1,0 +1,58 @@
+# .github/workflows/ci.yml
+# Naziv pipeline-a koji će se videti u "Actions" tabu na GitHub-u
+name: CI Pipeline (Automatska provera koda)
+
+# Definišemo "okidače" (triggere) - kada želimo da se ovaj proces pokrene
+on:
+  # Pokreni se svaki put kada neko uradi 'push' direktno na main granu
+  push:
+    branches: [ main ]
+  # Pokreni se svaki put kada neko otvori 'Pull Request' ka main grani 
+  # (Ovo nam je ključno da proverimo kod pre nego što ga spojimo)
+  pull_request:
+    branches: [ main ]
+
+# Glavni deo posla koji pipeline obavlja
+jobs:
+  test:
+    # Koristimo najnoviju stabilnu verziju Ubuntu Linux-a kao virtuelnu mašinu
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. KORAK: "Checkout" koda
+      # Ova akcija kopira naš kod iz repozitorijuma u virtuelnu mašinu
+      - name: Preuzimanje koda iz repozitorijuma
+        uses: actions/checkout@v4
+
+      # 2. KORAK: Podešavanje Node.js okruženja
+      # Moramo instalirati Node da bi mogli da pokrenemo npm komande
+      - name: Instalacija Node.js (verzija 20)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          # Automatski kešira zavisnosti (node_modules) kako bi svaki sledeći build bio brži
+          cache: 'npm'
+
+      # 3. KORAK: Instalacija paketa
+      # Koristimo 'npm ci' (Clean Install) umesto 'npm install'.
+      # Zašto? Zato što je 'ci' brži, striktno prati package-lock.json i 
+      # idealan je za automatizovane sisteme jer ne menja lock fajl.
+      - name: Instalacija zavisnosti (npm ci)
+        run: npm ci
+
+      # 4. KORAK: Provera grešaka (Build & Typecheck)
+      # Pokretanjem build-a proveravamo da li TypeScript izbacuje greške.
+      # Ako ovde pukne, znači da smo negde promašili tipove (npr. Request vs NextRequest)
+      - name: Provera TypeScript tipova i Build procesa
+        run: npm run build  
+
+      # 5. KORAK: Testiranje
+      # Ovde pokrećemo Jest testove. Ako bilo koji test padne, ceo CI postaje crven.
+      - name: Pokretanje automatskih testova
+        run: npm test
+        # Pošto naša aplikacija koristi bazu i autentifikaciju, 
+        # moramo obezbediti privremene (fake) Environment Varijable 
+        # kako Next.js i Drizzle ne bi prijavili grešku tokom testiranja.
+        env:
+          DATABASE_URL: "postgres://user:pass@localhost:5432/test_db"
+          NEXTAUTH_SECRET: "test_secret_123"
