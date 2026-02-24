@@ -777,4 +777,152 @@ select.input-field option[disabled] {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}.p-gh {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.p-gh-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.p-gh-title {
+  margin: 0;
+  font-size: 16px;
+}
+
+.p-gh-open {
+  font-size: 13px;
+  text-decoration: underline;
+  opacity: 0.9;
+}
+
+.p-gh-state {
+  opacity: 0.85;
+  font-size: 14px;
+  padding: 8px 0;
+}
+
+.p-gh-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 14px;
+}
+
+@media (max-width: 980px) {
+  .p-gh-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.p-gh-user {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.p-gh-avatar {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.p-gh-userMeta {
+  min-width: 0;
+}
+
+.p-gh-login {
+  font-weight: 700;
+}
+
+.p-gh-name {
+  opacity: 0.9;
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.p-gh-stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.p-gh-langs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.p-gh-pill {
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.p-gh-repos {
+  min-width: 0;
+}
+
+.p-gh-subtitle {
+  font-size: 13px;
+  opacity: 0.9;
+  margin-bottom: 8px;
+}
+
+.p-gh-empty {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.p-gh-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.p-gh-item {
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.p-gh-repoName {
+  font-weight: 700;
+  text-decoration: underline;
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.p-gh-repoMeta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.p-gh-desc {
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.85;
 }
