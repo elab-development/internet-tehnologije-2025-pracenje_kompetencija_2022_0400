@@ -7,12 +7,13 @@ import { requireRole } from "@/lib/guards";
 
 export async function POST(
   req: NextRequest, 
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> } // params je sada Promise
 ) {
   const auth = await requireRole(["moderator", "admin"]);
   if (auth.error) return auth.error;
 
-  const { id } = await params;
+  // Moramo sačekati razrešavanje params-a pre korišćenja
+  const { id } = await params; 
 
   try {
     const [updated] = await db
@@ -29,7 +30,7 @@ export async function POST(
     }
 
     return NextResponse.json({ credential: updated }, { status: 200 });
-  } catch {
+  } catch (err) {
     return NextResponse.json({ error: "Greška pri odobravanju." }, { status: 500 });
   }
 }

@@ -9,14 +9,15 @@ type Body = { reason?: string };
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> } // Ispravljeno na Promise
 ) {
   const auth = await requireRole(["moderator", "admin"]);
   if (auth.error) return auth.error;
 
-  const id = params.id;
+  // Sačekamo id iz params-a
+  const { id } = await params; 
+  
   const body = (await req.json().catch(() => ({}))) as Body;
-
   const reason = (body.reason ?? "").trim() || "Odbijeno od strane moderatora";
 
   try {
@@ -35,7 +36,7 @@ export async function POST(
     }
 
     return NextResponse.json({ credential: updated }, { status: 200 });
-  } catch {
+  } catch (err) {
     return NextResponse.json({ error: "Greška pri odbijanju." }, { status: 500 });
   }
 }
