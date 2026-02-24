@@ -13,7 +13,13 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   app:
-    build: .
+    build:
+      context: .
+      args:
+        JWT_SECRET: ${JWT_SECRET}
+        JWT_EXPIRES: ${JWT_EXPIRES}
+        DATABASE_URL: ${DATABASE_URL}
+        API_URL: ${API_URL}
     container_name: pracenjekompetencija-app
     restart: always
     depends_on:

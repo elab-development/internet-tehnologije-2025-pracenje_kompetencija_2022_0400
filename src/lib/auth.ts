@@ -1,10 +1,11 @@
 import * as jwt from "jsonwebtoken";
  
-
-export const AUTH_COOKIE = "auth";
  
-const JWT_SECRET = process.env.JWT_SECRET as jwt.Secret;
-const JWT_EXPIRES = process.env.JWT_EXPIRES ?? "7d";
+ 
+export const AUTH_COOKIE = "auth";
+
+export const JWT_SECRET = (process.env.JWT_SECRET ?? "TAJNA_LOZINKA_ZA_JWT_TOKEN"); // test fallback
+export const JWT_EXPIRES = (process.env.JWT_EXPIRES ?? "7d");
 
 if (!JWT_SECRET) {
   throw new Error("Missing JWT_SECRET in env file");

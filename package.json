@@ -2,10 +2,10 @@
   "name": "pracenjekompetencija",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
+  "scripts": { 
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p $PORT",
     "lint": "next lint",
     "db:migrate": "npx drizzle-kit generate && npx drizzle-kit push",
     "db:seed": "tsx src/db/seed.ts",
