@@ -34,7 +34,7 @@ export default function ModeratorDashboardPage() {
           </div>
         </Link>
 
-        <Link href="/moderator/competencies" style={cardStyle}>
+        <Link href="/competencies" style={cardStyle}>
           <div style={iconWrapStyle}>
             <FiAward size={20} />
           </div>
