@@ -1,30 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { userCompetencies, credentials } from "@/db/schema";
-import { getAuthUser } from "@/lib/guards";
+import { requireAuthFromReq } from "@/lib/guards";
 import { eq, count } from "drizzle-orm";
 
-export async function GET() {
-  // Koristimo 'as any' da TypeScript ne pravi problem oko pristupa u.id
-  const u = await getAuthUser() as any;
-  if (!u || !u.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export async function GET(req: NextRequest) {
+  const { userId, error } = await requireAuthFromReq(req);
+  if (error) return error;
 
   try {
     const [compCount] = await db
       .select({ val: count() })
       .from(userCompetencies)
-      .where(eq(userCompetencies.userId, u.id));
+      .where(eq(userCompetencies.userId, userId!));
 
     const [credCount] = await db
       .select({ val: count() })
       .from(credentials)
-      .where(eq(credentials.userId, u.id));
+      .where(eq(credentials.userId, userId!));
 
     return NextResponse.json({
       totalCompetencies: compCount.val,
       totalCredentials: credCount.val,
     });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: "Greška pri dobavljanju statistike." }, { status: 500 });
   }
 }
