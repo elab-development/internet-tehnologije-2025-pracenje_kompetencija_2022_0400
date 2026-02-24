@@ -604,4 +604,177 @@ select.input-field option[disabled] {
 
 .p-modal-body {
   padding: 0; /* form već ima padding preko .p-form */
+}/* =========================
+   PROFILE HEADER BLOCK
+   ========================= */
+
+.p-profile {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 14px;
+  margin: 12px 0 16px;
+}
+
+@media (max-width: 980px) {
+  .p-profile {
+    grid-template-columns: 1fr;
+  }
+}
+
+.p-profile-card {
+  padding: 0;
+}
+
+.p-profile-top {
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.p-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  color: #e9eefc;
+  background: rgba(91, 140, 255, 0.20);
+  border: 1px solid rgba(91, 140, 255, 0.28);
+  flex: 0 0 auto;
+}
+
+.p-profile-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.p-profile-name {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #aeb8d6;
+  font-weight: 900;
+}
+
+.p-profile-headline {
+  margin-top: 4px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #e9eefc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.p-badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.p-badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #e9eefc;
+}
+
+.p-badge.ok {
+  background: rgba(80, 255, 160, 0.12);
+  border-color: rgba(80, 255, 160, 0.22);
+  color: #66ffad;
+}
+
+.p-badge.muted {
+  color: #aeb8d6;
+}
+
+.p-profile-body {
+  padding: 14px;
+}
+
+.p-profile-bio {
+  margin: 0 0 12px;
+  color: #aeb8d6;
+  line-height: 1.6;
+}
+
+.p-profile-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.p-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #e9eefc;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.p-link:hover {
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.p-profile-side {
+  overflow: hidden;
+}
+
+.p-side-list {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.p-side-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.p-side-k {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #93a0c6;
+  font-weight: 900;
+}
+
+.p-side-v {
+  font-weight: 900;
+  color: #e9eefc;
+}
+
+.p-side-actions {
+  margin-top: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getAuthUser } from "@/lib/guards";
 import Link from "next/link";
-import { FiUsers, FiSettings, FiDatabase, FiArrowRight } from "react-icons/fi";
+import { FiUsers, FiSettings, FiDatabase, FiShield } from "react-icons/fi";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { count, eq } from "drizzle-orm";
@@ -12,7 +12,6 @@ export default async function AdminDashboard() {
   if (!u) redirect("/login");
   if ((u.role ?? "user") !== "admin") redirect("/");
 
-  // Statistika iz baze
   const [totalRes] = await db.select({ value: count() }).from(users);
   const [adminsRes] = await db.select({ value: count() }).from(users).where(eq(users.role, "admin"));
   const [modsRes] = await db.select({ value: count() }).from(users).where(eq(users.role, "moderator"));
@@ -28,81 +27,113 @@ export default async function AdminDashboard() {
   };
 
   return (
-    <div className="cred-page">
-      {/* Header sekcija - identična kao na listi korisnika */}
-      <header className="cred-header">
-        <div>
-          <h1>Admin Dashboard</h1>
-          <p>Dobrodošli nazad, {u.name}. Kontrolni centar sistema.</p>
+    <main style={containerStyle}>
+      <div style={contentWrapStyle}>
+        <div style={{ marginBottom: "40px" }}>
+          <h1 style={titleStyle}>Admin Dashboard</h1>
+          <p style={subtitleStyle}>Dobrodošli nazad, <span style={{color: '#818cf8'}}>{u.name}</span>.</p>
         </div>
-        <div className="header-actions">
-          <span className="pill">Admin Access</span>
-        </div>
-      </header>
 
-      {/* Glavni sadržaj */}
-      <div style={dashboardGridStyle}>
-        
-        {/* LEVA KOLONA: Brze akcije/Meni */}
-        <div style={sidebarStyle}>
-          <h2 style={sectionTitleStyle}>Upravljanje</h2>
+        {/* Glavni Layout: Kartice i Grafikoni */}
+        <div style={mainLayoutGrid}>
           
-          <Link href="/admin/users" className="btn" style={menuLinkStyle}>
-            <FiUsers size={18} />
-            <span>Korisnici</span>
-            <FiArrowRight style={{ marginLeft: "auto", opacity: 0.5 }} />
-          </Link>
-
-          {/* Onemogućeni linkovi jer još nemaju rute, ali čuvaju dizajn */}
-          <div className="btn muted" style={{ ...menuLinkStyle, cursor: "not-allowed", opacity: 0.6 }}>
-            <FiSettings size={18} />
-            <span>Podešavanja (Uskoro)</span>
+          {/* LEVA STRANA: Brzi linkovi */}
+          <div style={sideGridStyle}>
+            <Link href="/admin/users" style={cardStyle}>
+              <div style={iconWrapStyle}><FiUsers size={24} /></div>
+              <span style={cardLabelStyle}>Korisnici</span>
+            </Link>
+            <Link href="/admin/settings" style={cardStyle}>
+              <div style={iconWrapStyle}><FiSettings size={24} /></div>
+              <span style={cardLabelStyle}>Podešavanja</span>
+            </Link>
+            <Link href="/admin/logs" style={cardStyle}>
+              <div style={iconWrapStyle}><FiDatabase size={24} /></div>
+              <span style={cardLabelStyle}>Sistemski Logovi</span>
+            </Link>
           </div>
 
-          <div className="btn muted" style={{ ...menuLinkStyle, cursor: "not-allowed", opacity: 0.6 }}>
-            <FiDatabase size={18} />
-            <span>Sistemski Logovi</span>
+          {/* DESNA STRANA: Grafikoni */}
+          <div style={chartsWrapperStyle}>
+            <AdminCharts stats={stats} />
           </div>
-        </div>
 
-        {/* DESNA KOLONA: Grafikoni */}
-        <div className="cred-card" style={{ padding: "20px" }}>
-          <AdminCharts stats={stats} />
         </div>
-
       </div>
-    </div>
+    </main>
   );
 }
 
-// Inline stilovi koji dopunjuju tvoj globalni CSS za specifičan dashboard layout
-const dashboardGridStyle: React.CSSProperties = {
-  display: "grid",
-  gridTemplateColumns: "minmax(250px, 300px) 1fr",
-  gap: "20px",
-  maxWidth: "980px",
-  margin: "0 auto",
-  width: "100%",
+// NOVI I POBOLJŠANI STILOVI
+const containerStyle: React.CSSProperties = {
+  minHeight: "100vh",
+  background: "#0a0a0c", // Tamnija pozadina za bolji kontrast
+  padding: "60px 20px",
+  color: "#fff"
 };
 
-const sidebarStyle: React.CSSProperties = {
+const contentWrapStyle: React.CSSProperties = {
+  maxWidth: "1200px", // Povećano da grafikoni imaju mesta
+  margin: "0 auto",
+};
+
+const titleStyle: React.CSSProperties = {
+  fontSize: "36px",
+  fontWeight: 800,
+  marginBottom: "8px",
+};
+
+const subtitleStyle: React.CSSProperties = {
+  color: "#9ca3af",
+  fontSize: "16px",
+};
+
+const mainLayoutGrid: React.CSSProperties = {
+  display: "grid",
+  gridTemplateColumns: "300px 1fr", // Fiksna širina za meni, ostatak za grafikone
+  gap: "30px",
+  alignItems: "start",
+};
+
+// Responsiveness za mobilne
+const sideGridStyle: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
-  gap: "10px",
+  gap: "16px",
 };
 
-const menuLinkStyle: React.CSSProperties = {
-  justifyContent: "flex-start",
-  padding: "14px 18px",
-  width: "100%",
+const chartsWrapperStyle: React.CSSProperties = {
+  background: "rgba(255, 255, 255, 0.02)",
+  borderRadius: "24px",
+  padding: "10px", // AdminCharts već ima svoje paddinge
+  border: "1px solid rgba(255, 255, 255, 0.05)",
+};
+
+const cardStyle: React.CSSProperties = {
+  display: "flex",
+  alignItems: "center",
+  gap: "16px",
+  padding: "20px",
+  textDecoration: "none",
+  borderRadius: "16px",
   background: "rgba(255, 255, 255, 0.04)",
+  border: "1px solid rgba(255, 255, 255, 0.08)",
+  backdropFilter: "blur(10px)",
+  color: "#e5e7eb",
+  transition: "all 0.2s ease",
 };
 
-const sectionTitleStyle: React.CSSProperties = {
-  fontSize: "12px",
-  textTransform: "uppercase",
-  letterSpacing: "0.1em",
-  color: "#aeb8d6",
-  marginBottom: "8px",
-  paddingLeft: "4px",
+const iconWrapStyle: React.CSSProperties = {
+  width: "48px",
+  height: "48px",
+  display: "grid",
+  placeItems: "center",
+  borderRadius: "12px",
+  background: "rgba(99, 102, 241, 0.1)",
+  color: "#818cf8",
+};
+
+const cardLabelStyle: React.CSSProperties = {
+  fontSize: "15px",
+  fontWeight: 600,
 };
