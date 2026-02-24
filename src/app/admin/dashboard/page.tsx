@@ -23,33 +23,10 @@ export default async function AdminDashboard() {
             <span style={cardLabelStyle}>Korisnici</span>
           </Link>
 
-          <Link href="/admin/settings" style={cardStyle}>
-            <div style={iconWrapStyle}>
-              <FiSettings size={24} />
-            </div>
-            <span style={cardLabelStyle}>Podešavanja</span>
-          </Link>
+          
+ 
 
-          <Link href="/admin/logs" style={cardStyle}>
-            <div style={iconWrapStyle}>
-              <FiActivity size={24} />
-            </div>
-            <span style={cardLabelStyle}>Logovi</span>
-          </Link>
-
-          <Link href="/admin/db" style={cardStyle}>
-            <div style={iconWrapStyle}>
-              <FiDatabase size={24} />
-            </div>
-            <span style={cardLabelStyle}>Baza podataka</span>
-          </Link>
-
-          <Link href="/moderator/credentials" style={cardStyle}>
-            <div style={iconWrapStyle}>
-              <FiShield size={24} />
-            </div>
-            <span style={cardLabelStyle}>Moderacija</span>
-          </Link>
+         
         </div>
       </div>
     </main>

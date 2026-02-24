@@ -13,12 +13,17 @@ type PatchBody = {
   isActive?: boolean;
   password?: string;
 };
+ 
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
 
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, { params }: RouteContext) {
   const { error } = await requireRole(["admin"]);
   if (error) return error;
 
-  const id = params.id;
+  const { id } = await params; // OBAVEZAN AWAIT
+  console.log("GET User ID:", id);
 
   try {
     const [u] = await db
@@ -39,16 +44,18 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     }
 
     return NextResponse.json({ user: u });
-  } catch {
+  } catch (err) {
+    console.error("Database error:", err);
     return NextResponse.json({ error: "Greška pri učitavanju korisnika." }, { status: 500 });
   }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(req: NextRequest, { params }: RouteContext) {
   const { error } = await requireRole(["admin"]);
   if (error) return error;
 
-  const id = params.id;
+  const { id } = await params; // OBAVEZAN AWAIT
+  console.log("PATCH User ID:", id);
 
   let body: PatchBody;
   try {
@@ -61,13 +68,13 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
   if (typeof body.name === "string") {
     const name = body.name.trim();
-    if (!name) return NextResponse.json({ error: "name ne može biti prazan." }, { status: 400 });
+    if (!name) return NextResponse.json({ error: "Ime ne može biti prazno." }, { status: 400 });
     patch.name = name;
   }
 
   if (typeof body.email === "string") {
     const email = body.email.trim().toLowerCase();
-    if (!email) return NextResponse.json({ error: "email ne može biti prazan." }, { status: 400 });
+    if (!email) return NextResponse.json({ error: "Email ne može biti prazan." }, { status: 400 });
     patch.email = email;
   }
 
@@ -82,7 +89,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     patch.role = body.role;
   }
 
-  if (typeof body.password === "string") {
+  if (typeof body.password === "string" && body.password.length > 0) {
     if (body.password.length < 6) {
       return NextResponse.json({ error: "Lozinka mora imati minimum 6 karaktera." }, { status: 400 });
     }
@@ -118,21 +125,26 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(_req: NextRequest, { params }: RouteContext) {
   const { error } = await requireRole(["admin"]);
   if (error) return error;
 
-  const id = params.id;
+  const { id } = await params; // OBAVEZAN AWAIT
+  console.log("DELETE User ID:", id);
 
   try {
-    const [deleted] = await db.delete(users).where(eq(users.id, id)).returning({ id: users.id });
+    const [deleted] = await db
+      .delete(users)
+      .where(eq(users.id, id))
+      .returning({ id: users.id });
 
     if (!deleted) {
       return NextResponse.json({ error: "Korisnik nije pronađen." }, { status: 404 });
     }
 
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (err) {
+    console.error("Delete error:", err);
     return NextResponse.json({ error: "Greška pri brisanju korisnika." }, { status: 500 });
   }
 }

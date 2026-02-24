@@ -46,10 +46,15 @@ function patchReq(body: any) {
 }
 
 describe("Route Handlers: /api/admin/users/:id", () => {
-  const params = { params: { id: "1" } };
+  // KLJUČNA IZMENA: params mora biti Promise da bi 'await params' u route.ts radio
+  const context = { 
+    params: Promise.resolve({ id: "1" }) 
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Resetujemo context za svaki test jer await konzumira promise
+    (context as any).params = Promise.resolve({ id: "1" });
   });
 
   describe("GET", () => {
@@ -58,7 +63,7 @@ describe("Route Handlers: /api/admin/users/:id", () => {
         error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
       });
 
-      const res = await GET(createNextReq("http://test.local"), params);
+      const res = await GET(createNextReq("http://test.local"), context);
       expect(res.status).toBe(401);
     });
 
@@ -70,7 +75,7 @@ describe("Route Handlers: /api/admin/users/:id", () => {
         }),
       });
 
-      const res = await GET(createNextReq("http://test.local"), params);
+      const res = await GET(createNextReq("http://test.local"), context);
       expect(res.status).toBe(404);
     });
 
@@ -84,7 +89,7 @@ describe("Route Handlers: /api/admin/users/:id", () => {
         }),
       });
 
-      const res = await GET(createNextReq("http://test.local"), params);
+      const res = await GET(createNextReq("http://test.local"), context);
       const data = await res.json();
       expect(res.status).toBe(200);
       expect(data.user.id).toBe("1");
@@ -97,7 +102,7 @@ describe("Route Handlers: /api/admin/users/:id", () => {
         error: NextResponse.json({ error: "Forbidden" }, { status: 403 }),
       });
 
-      const res = await PATCH(patchReq({ role: "admin" }), params);
+      const res = await PATCH(patchReq({ role: "admin" }), context);
       expect(res.status).toBe(403);
     });
 
@@ -113,7 +118,7 @@ describe("Route Handlers: /api/admin/users/:id", () => {
         }),
       });
 
-      const res = await PATCH(patchReq({ name: "Novo" }), params);
+      const res = await PATCH(patchReq({ name: "Novo" }), context);
       const data = await res.json();
       expect(res.status).toBe(200);
       expect(data.user.name).toBe("Novo");
@@ -129,7 +134,7 @@ describe("Route Handlers: /api/admin/users/:id", () => {
         }),
       });
 
-      const res = await DELETE(createNextReq("http://test.local"), params);
+      const res = await DELETE(createNextReq("http://test.local"), context);
       const data = await res.json();
       expect(res.status).toBe(200);
       expect(data.ok).toBe(true);
