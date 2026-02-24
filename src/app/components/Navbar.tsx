@@ -83,14 +83,22 @@ export default function Navbar() {
               <Link className={isActive(modCredentialsHref) ? "active" : ""} href={modCredentialsHref}>
                 Kredencijali
               </Link>
+                <Link className={isActive("/competencies") ? "active" : ""} href="/competencies">
+                  Kompetencije
+                </Link>
             </>
           )}
 
           {/* ADMIN */}
           {isAdmin && (
+            <>
             <Link className={isActive(adminDashboardHref) ? "active" : ""} href={adminDashboardHref}>
               Admin
             </Link>
+                <Link className={isActive("/competencies") ? "active" : ""} href="/competencies">
+              Kompetencije
+            </Link>
+            </>
           )}
 
           {/* USER */}
@@ -101,9 +109,7 @@ export default function Navbar() {
           )}
 
           
-          <Link className={isActive("/competencies") ? "active" : ""} href="/competencies">
-            Kompetencije
-          </Link>
+        
         </nav>
 
         <div className="right">

@@ -56,7 +56,7 @@ Sva serverska logika i API endpoint-i su smešteni u `src/app/api` i zaštićeni
 * **api/competencies** - Centralni API za upravljanje katalogom dostupnih kompetencija.
 
 ### 2. Korisnički interfejs i stranice (src/app)
-Stranice su grupisane prema funkcionalnim celinama:
+Stranice su grupisane prema funkcionalnim celinama :
 * **(auth)/login & (auth)/register** - Interfejs za pristup sistemu.
 * **profile/** - Glavni korisnički dashboard.
   - `profile/skills` - Pregled i dodavanje ličnih veština korisnika.
