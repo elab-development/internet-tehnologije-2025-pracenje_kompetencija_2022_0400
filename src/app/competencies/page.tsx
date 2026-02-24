@@ -49,7 +49,7 @@ export default function CompetenciesPage() {
     setLoading(true);
     setMsg(null);
     try {
-      const res = await fetch("/api/competencies", { cache: "no-store" });
+      const res = await fetch("/api/moderator/competencies", { cache: "no-store" });
       const data = (await res.json()) as ListRes | ApiErr;
 
       if (!res.ok) {
@@ -120,7 +120,7 @@ export default function CompetenciesPage() {
     setSaving(true);
     try {
       if (mode === "create") {
-        const res = await fetch("/api/competencies", {
+        const res = await fetch("/api/moderator/competencies", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -149,7 +149,7 @@ export default function CompetenciesPage() {
         return;
       }
 
-      const res = await fetch(`/api/competencies/${activeId}`, {
+      const res = await fetch(`/api/moderator/competencies/${activeId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -182,7 +182,7 @@ export default function CompetenciesPage() {
     if (!ok) return;
 
     try {
-      const res = await fetch(`/api/competencies/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/moderator/competencies/${id}`, { method: "DELETE" });
       const data = (await res.json()) as { ok?: boolean } | ApiErr;
 
       if (!res.ok) {
