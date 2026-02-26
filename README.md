@@ -71,3 +71,28 @@ Stranice su grupisane prema funkcionalnim celinama :
 * **src/db/** - Konfiguracija baze podataka i Drizzle ORM šeme (schema.ts).
 * **src/lib/** - Pomoćne funkcije, klase za validaciju i konfiguracija JWT-a.
 
+### 4.Pokretanje aplikacije
+
+Aplikacija je u potpunosti kontejnerizovana pomoću Docker-a i može se pokrenuti jednim korakom.
+
+Za build i pokretanje sistema koristi se:
+
+               
+                  docker compose up -d --build
+
+Ova komanda:
+
+- gradi Docker image aplikacije (Next.js + Drizzle + PostgreSQL)
+
+- pokreće bazu podataka (PostgreSQL)
+
+- pokreće aplikacioni server
+
+- povezuje servise u internu Docker mrežu
+
+- izlaže aplikaciju na http://localhost:3000
+
+ ### 5.Pokretanje testova
+ Testovi se izvršavaju unutar Docker kontejnera kako bi okruženje bilo identično produkcionom.
+ 
+         docker exec -it pracenjekompetencija-app npm test

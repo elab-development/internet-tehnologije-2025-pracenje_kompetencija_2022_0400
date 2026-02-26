@@ -27,4 +27,4 @@ COPY --from=builder /app/drizzle.config.ts ./
 COPY --from=builder /app/src ./src
 
 EXPOSE 3000
-CMD ["sh", "-c", "node_modules/.bin/next start -H 0.0.0.0 -p ${PORT}"]
+CMD ["sh", "-c", "node_modules/.bin/next start -H 0.0.0.0 -p ${PORT:-3000}"]
